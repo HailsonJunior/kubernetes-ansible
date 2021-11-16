@@ -1,0 +1,9 @@
+---
+- name: Cluster K8s Multi Master With HAProxy
+  hosts: 'all'
+  any_errors_fatal: true
+  become: yes
+  become_method: sudo
+  role:
+
+...    

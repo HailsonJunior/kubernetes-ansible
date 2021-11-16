@@ -1,0 +1,58 @@
+---
+- name: Change hostname manager1
+  hostname:
+    name: manager1
+  when: "'manager1' in inventory_hostname"
+  tags: 
+    - hostname
+    - hostname-manager1
+
+- name: Change hostname manager2
+  hostname:
+    name: manager2
+  when: "'manager2' in inventory_hostname"
+  tags: 
+    - hostname
+    - hostname-manager2
+
+- name: Change hostname manager3
+  hostname:
+    name: manager3
+  when: "'manager3' in inventory_hostname"
+  tags: 
+    - hostname
+    - hostname-manager3
+
+- name: Change hostname worker1
+  hostname:
+    name: worker1
+  when: "'worker1' in inventory_hostname"
+  tags: 
+    - hostname
+    - hostname-worker1
+
+- name: Change hostname worker2
+  hostname:
+    name: worker2
+  when: "'worker2' in inventory_hostname"
+  tags: 
+    - hostname
+    - hostname-worker2
+
+- name: Change hostname worker3
+  hostname:
+    name: worker3
+  when: "'worker3' in inventory_hostname"
+  tags: 
+    - hostname
+    - hostname-worker3
+
+- name: Change hostname HAProxy
+  hostname:
+    name: haproxy
+  when: "'haproxy1' in inventory_hostname"
+  tags: 
+    - hostname
+    - hostname-haproxy
+
+...

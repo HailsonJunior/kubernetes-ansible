@@ -1,0 +1,13 @@
+---
+- name: Update repo
+  apt:
+    update_cache: yes
+  tags: update
+
+- name: Upgrade all packages
+  apt:
+    name: "*"
+    state: latest
+  tags: upgrade
+
+...  
