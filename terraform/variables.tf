@@ -1,0 +1,12 @@
+variable "aws_region" {
+  type        = string
+  default     = "us-east-1"
+  description = "AWS Region"
+}
+
+variable "profile" {
+  type        = string
+  default     = "Terraform"
+  description = "Profile"
+}
+
