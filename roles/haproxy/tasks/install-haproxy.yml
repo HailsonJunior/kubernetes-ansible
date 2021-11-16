@@ -1,0 +1,37 @@
+---
+- name: Install HAProxy
+  apt:
+    name: haproxy
+    state: latest
+  when: "'haproxy1' in inventory_hostname"
+  tags: install-haproxy
+
+- name: Configure frontend and backend
+  blockinfile:
+    path: /etc/haproxy/haproxy.cfg
+    block: |
+      frontend kubernetes
+          mode tcp
+          bind 172.31.87.46:6443
+          option tcplog
+          default_backend k8s-masters
+
+      backend k8s-masters
+          mode tcp
+          balance roundrobin
+          option tcp-check
+          server k8s-manager01 172.31.87.40:6443 check fall 3 rise 2
+          server k8s-manager02 172.31.87.41:6443 check fall 3 rise 2
+          server k8s-manager03 172.31.87.42:6443 check fall 3 rise 2
+  when: "'haproxy1' in inventory_hostname"
+  tags: configure-haproxy
+
+- name: Restart HAProxy service
+  service:
+    name: haproxy
+    state: restarted
+    enabled: yes
+  when: "'haproxy1' in inventory_hostname"1~
+  tags: restart-haproxy
+
+...  

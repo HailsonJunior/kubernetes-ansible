@@ -1,7 +1,7 @@
 ---
 - name: Change hostname manager1
   hostname:
-    name: manager1
+    name: manager01
   when: "'manager1' in inventory_hostname"
   tags: 
     - hostname
@@ -9,7 +9,7 @@
 
 - name: Change hostname manager2
   hostname:
-    name: manager2
+    name: manager02
   when: "'manager2' in inventory_hostname"
   tags: 
     - hostname
@@ -17,7 +17,7 @@
 
 - name: Change hostname manager3
   hostname:
-    name: manager3
+    name: manager03
   when: "'manager3' in inventory_hostname"
   tags: 
     - hostname
@@ -25,7 +25,7 @@
 
 - name: Change hostname worker1
   hostname:
-    name: worker1
+    name: worker01
   when: "'worker1' in inventory_hostname"
   tags: 
     - hostname
@@ -33,7 +33,7 @@
 
 - name: Change hostname worker2
   hostname:
-    name: worker2
+    name: worker02
   when: "'worker2' in inventory_hostname"
   tags: 
     - hostname
@@ -41,7 +41,7 @@
 
 - name: Change hostname worker3
   hostname:
-    name: worker3
+    name: worker03
   when: "'worker3' in inventory_hostname"
   tags: 
     - hostname
@@ -49,7 +49,7 @@
 
 - name: Change hostname HAProxy
   hostname:
-    name: haproxy
+    name: haproxy01
   when: "'haproxy1' in inventory_hostname"
   tags: 
     - hostname
