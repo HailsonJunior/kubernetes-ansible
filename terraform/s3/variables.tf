@@ -1,5 +1,5 @@
 variable "bucket_name" {
   type        = string
-  default     = "kubernetsbucket"
+  default     = "testmykubernetsbucket"
   description = "Bucket Kubernetes name"
 }
