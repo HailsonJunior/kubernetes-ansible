@@ -40,18 +40,15 @@
 
 - name: Download the Google Cloud public signing key
   shell: 'curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg'
-  when: "'manager' in inventory_hostname"
   tags: download-key
 
 - name: Add the Kubernetes apt repository
   shell: 'echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list'
-  when: "'manager' in inventory_hostname"
   tags: add-k8s-apt-repo
 
 - name: Update repo
   apt:
     update_cache: yes
-  when: "'manager' in inventory_hostname"
   tags: update
 
 - name: install kubelet, kubeadm and kubectl
@@ -61,49 +58,74 @@
       - kubeadm
       - kubectl
     state: latest
-  when: "'manager' in inventory_hostname"
   tags: install-packages
 
 - name: Pin kubelet, kubeadm and kubectl version
   shell: 'apt-mark hold kubelet kubeadm kubectl'
-  when: "'manager' in inventory_hostname"
   tags: pin-packages
 
 - name: Init K8s cluster
   shell: kubeadm init --control-plane-endpoint "haproxy01:6443" --upload-certs | grep -i "\--certificate-key" | cut -d ' ' -f3
   when: "'manager1' in inventory_hostname"
-  register: k8s-certificate-key
+  register: k8s_key
   tags: init-cluster
 
 - name: Registry cluster token
-  shell: "kubeadm token list | cut -d ' ' -f1  | sed -n '2p'"
+  shell: kubeadm token list | grep -i "kubeadm init" | cut -d ' ' -f1
   when: "'manager1' in inventory_hostname"
   register: k8s_token
   changed_when: True
   tags: registry-token
 
-- name: Ca Hash
+- name: Registry Ca Hash
   shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
   when: "'manager1' in inventory_hostname"
   register: k8s_ca_hash
   tags: registry-hash
 
-- name: Print Certificate Key
-  debug:
-    msg: "[MASTER] K8s_TOKEN - The certificate is {{ hostvars['K8S_TOKEN_HOLDER']['key'] }}"
-  when: "'manager1' in inventory_hostname"
-  tags: print-cert-key
+- name: Add token, hash and certificate key in a dummy host
+  add_host:
+    name: "K8S_TOKEN_HOLDER"
+    key: "{{ k8s_key.stdout }}"
+    token: "{{ k8s_token.stdout }}"
+    hash: "{{ k8s_ca_hash.stdout }}"
+  tags: dummy-host
 
-- name: Print Token
+- name: Print certificate key
   debug:
-    msg: "[MASTER] K8S_TOKEN_HOLDER - O token eh {{ hostvars['K8S_TOKEN_HOLDER']['token'] }}"
-  when: "'manager1' in inventory_hostname"
+    msg: "[MASTER] K8S_TOKEN_HOLDER - the certificate key is {{ hostvars['K8S_TOKEN_HOLDER']['key'] }}"
+  tags: print-key
+
+- name: Print token
+  debug:
+    msg: "[MASTER] K8S_TOKEN_HOLDER - the token is {{ hostvars['K8S_TOKEN_HOLDER']['token'] }}"
   tags: print-token
 
 - name: Print hash
   debug:
-    msg: "[MASTER] K8S_TOKEN_HOLDER - O hash eh {{ hostvars['K8S_TOKEN_HOLDER']['hash'] }}"
-  when: "'manager1' in inventory_hostname"
+    msg: "[MASTER] K8S_TOKEN_HOLDER - the CA Hash is {{ hostvars['K8S_TOKEN_HOLDER']['hash'] }}"
   tags: print-hash
+
+- name: Create kube dir
+  file:
+    path: ~/.kube
+    state: directory
+    mode: 0750
+  when: "'manager1' in inventory_hostname"
+  tags: create-kube-dir
+
+- name: Link k8s admin conf
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    state: link
+  changed_when: True
+  when: "'manager1' in inventory_hostname"
+  tags: copy-k8s-admin-conf
+
+- name: Change owner 
+  shell: 'chown $(id -u):$(id -g) $HOME/.kube/config'
+  when: "'manager1' in inventory_hostname"
+  tags: change-owner
 
 ...  

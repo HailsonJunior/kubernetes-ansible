@@ -1,10 +1,73 @@
 ---
-- name: Adding managers
+- name: Adding manager2
   shell:
     kubeadm join haproxy01:6443 --token={{ hostvars['K8S_TOKEN_HOLDER']['token'] }} \
     --discovery-token-ca-cert-hash sha256:{{ hostvars['K8S_TOKEN_HOLDER']['hash'] }} \
     --control-plane --certificate-key {{ hostvars['K8S_TOKEN_HOLDER']['key'] }}
   when: "'manager2' in inventory_hostname"
-  tags: add-manager
+  tags: 
+    - join-manager2
+    - join-managers
+
+- name: Adding manager3
+  shell:
+    kubeadm join haproxy01:6443 --token={{ hostvars['K8S_TOKEN_HOLDER']['token'] }} \
+    --discovery-token-ca-cert-hash sha256:{{ hostvars['K8S_TOKEN_HOLDER']['hash'] }} \
+    --control-plane --certificate-key {{ hostvars['K8S_TOKEN_HOLDER']['key'] }}
+  when: "'manager3' in inventory_hostname"
+  tags:
+    - join-manager3
+    - join-managers
+
+- name: Adding workers
+  shell:
+    kubeadm join haproxy01:6443 --token={{ hostvars['K8S_TOKEN_HOLDER']['token'] }} \
+    --discovery-token-ca-cert-hash sha256:{{ hostvars['K8S_TOKEN_HOLDER']['hash'] }}
+  when: "'worker' in inventory_hostname"
+  tags: join-workers
+
+- name: Create kube dir - Manager2
+  file:
+    path: ~/.kube
+    state: directory
+    mode: 0750
+  when: "'manager2' in inventory_hostname"
+  tags: create-kube-dir
+
+- name: Create kube dir - Manager3
+  file:
+    path: ~/.kube
+    state: directory
+    mode: 0750
+  when: "'manager3' in inventory_hostname"
+  tags: create-kube-dir
+
+- name: Link K8s admin conf - Manager2
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    state: link
+  changed_when: true
+  when: "'manager2' in inventory_hostname"
+  tags: link-conf
+
+- name: Link K8s admin conf - Manager3
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    state: link
+  changed_when: true
+  when: "'manager3' in inventory_hostname"
+  tags: link-conf
+
+- name: Change owner - Manager2
+  shell: 'chown $(id -u):$(id -g) $HOME/.kube/config'
+  when: "'manager2' in inventory_hostname"
+  tags: change-owner
+
+- name: Change owner - Manager3
+  shell: 'chown $(id -u):$(id -g) $HOME/.kube/config'
+  when: "'manager3' in inventory_hostname"
+  tags: change-owner
 
 ...

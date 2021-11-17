@@ -1,0 +1,7 @@
+---
+- name: Apply Weave net
+  shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+  when: "'manager1' in inventory_hostname"
+  tags: weave-net
+
+...
