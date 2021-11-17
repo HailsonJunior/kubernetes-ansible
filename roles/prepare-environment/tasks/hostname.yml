@@ -55,4 +55,25 @@
     - hostname
     - hostname-haproxy
 
+- name: Name resolution HAProxy
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      172.31.87.40 manager01
+      172.31.87.41 manager02
+      172.31.87.42 manager03
+      172.31.87.46 haproxy01
+  when: "'haproxy1' in inventory_hostname"
+  tags: name-resolution
+
+- name: Name resolution Managers
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      172.31.87.40 manager01
+      172.31.87.41 manager02
+      172.31.87.42 manager03
+      172.31.87.46 haproxy01
+  when: "'manager' in inventory_hostname"
+
 ...

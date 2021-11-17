@@ -1,0 +1,10 @@
+---
+- name: Adding managers
+  shell:
+    kubeadm join haproxy01:6443 --token={{ hostvars['K8S_TOKEN_HOLDER']['token'] }} \
+    --discovery-token-ca-cert-hash sha256:{{ hostvars['K8S_TOKEN_HOLDER']['hash'] }} \
+    --control-plane --certificate-key {{ hostvars['K8S_TOKEN_HOLDER']['key'] }}
+  when: "'manager2' in inventory_hostname"
+  tags: add-manager
+
+...

@@ -31,7 +31,7 @@
     name: haproxy
     state: restarted
     enabled: yes
-  when: "'haproxy1' in inventory_hostname"1~
+  when: "'haproxy1' in inventory_hostname"
   tags: restart-haproxy
 
 ...  

@@ -1,0 +1,109 @@
+---
+- name: Install Docker
+  shell: 'curl -fsSL https://get.docker.com | bash'
+  tags: install-docker
+
+- name: Configure daemon Docker
+  copy:
+    src: ~/kubernetes-ansible/files/daemon.json
+    dest: /etc/docker/daemon.json
+  tags: conf-docker-daemon
+
+- name: Docker service dir
+  shell: 'mkdir -p /etc/systemd/system/docker.service.d'
+  tags: docker-service-dir
+
+- name: Daemon reload
+  shell: 'systemctl daemon-reload'
+  tags: daemon-reload
+
+- name: Restart Docker service
+  service:
+    name: docker
+    state: restarted
+  tags: restart-docker
+
+- name: Update repo
+  apt:
+    update_cache: yes
+  tags: update
+
+- name: Install packages needed to use the Kubernetes apt repository
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+    state: latest
+  when: "'manager' in inventory_hostname"
+  tags: install-packages
+
+- name: Download the Google Cloud public signing key
+  shell: 'curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg'
+  when: "'manager' in inventory_hostname"
+  tags: download-key
+
+- name: Add the Kubernetes apt repository
+  shell: 'echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list'
+  when: "'manager' in inventory_hostname"
+  tags: add-k8s-apt-repo
+
+- name: Update repo
+  apt:
+    update_cache: yes
+  when: "'manager' in inventory_hostname"
+  tags: update
+
+- name: install kubelet, kubeadm and kubectl
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: latest
+  when: "'manager' in inventory_hostname"
+  tags: install-packages
+
+- name: Pin kubelet, kubeadm and kubectl version
+  shell: 'apt-mark hold kubelet kubeadm kubectl'
+  when: "'manager' in inventory_hostname"
+  tags: pin-packages
+
+- name: Init K8s cluster
+  shell: kubeadm init --control-plane-endpoint "haproxy01:6443" --upload-certs | grep -i "\--certificate-key" | cut -d ' ' -f3
+  when: "'manager1' in inventory_hostname"
+  register: k8s-certificate-key
+  tags: init-cluster
+
+- name: Registry cluster token
+  shell: "kubeadm token list | cut -d ' ' -f1  | sed -n '2p'"
+  when: "'manager1' in inventory_hostname"
+  register: k8s_token
+  changed_when: True
+  tags: registry-token
+
+- name: Ca Hash
+  shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  when: "'manager1' in inventory_hostname"
+  register: k8s_ca_hash
+  tags: registry-hash
+
+- name: Print Certificate Key
+  debug:
+    msg: "[MASTER] K8s_TOKEN - The certificate is {{ hostvars['K8S_TOKEN_HOLDER']['key'] }}"
+  when: "'manager1' in inventory_hostname"
+  tags: print-cert-key
+
+- name: Print Token
+  debug:
+    msg: "[MASTER] K8S_TOKEN_HOLDER - O token eh {{ hostvars['K8S_TOKEN_HOLDER']['token'] }}"
+  when: "'manager1' in inventory_hostname"
+  tags: print-token
+
+- name: Print hash
+  debug:
+    msg: "[MASTER] K8S_TOKEN_HOLDER - O hash eh {{ hostvars['K8S_TOKEN_HOLDER']['hash'] }}"
+  when: "'manager1' in inventory_hostname"
+  tags: print-hash
+
+...  
