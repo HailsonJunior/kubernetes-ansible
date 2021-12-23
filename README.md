@@ -53,8 +53,9 @@ To use the Ansible roles you will only need to use the playbook ```playbook-k8s.
 ... 
 ```
 
-If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs ```kubernetes-ansible/inventory.ini``` according to your environment.
+If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs ```kubernetes-ansible/inventory.ini``` according to your environment. It will also be necessary to edit the steps "Configure frontend and backend" on ```kubernetes-ansible/roles/haproxy/tasks/install-haproxy.yml``` playbook and the step "Name resolution HAProxy" on ```kubernetes-ansible/roles/prepare-environment/tasks/hostname.yml``` playbook:
 
+- kubernetes-ansible/inventory.ini
 ```sh
 [managers]
 manager1 ansible_host=172.31.87.40
@@ -68,6 +69,40 @@ worker3 ansible_host=172.31.87.45
 
 [haproxy]
 haproxy1 ansible_host=172.31.87.46
+```
+
+- kubernetes-ansible/roles/haproxy/tasks/install-haproxy.yml
+```sh
+- name: Configure frontend and backend
+  blockinfile:
+    path: /etc/haproxy/haproxy.cfg
+    block: |
+      frontend kubernetes
+          mode tcp
+          bind 172.31.87.46:6443
+          option tcplog
+          default_backend k8s-masters
+
+      backend k8s-masters
+          mode tcp
+          balance roundrobin
+          option tcp-check
+          server k8s-manager01 172.31.87.40:6443 check fall 3 rise 2
+          server k8s-manager02 172.31.87.41:6443 check fall 3 rise 2
+          server k8s-manager03 172.31.87.42:6443 check fall 3 rise 2
+```
+
+- kubernetes-ansible/roles/prepare-environment/tasks/hostname.yml
+```sh
+- name: Name resolution HAProxy
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      172.31.87.40 manager01
+      172.31.87.41 manager02
+      172.31.87.42 manager03
+      172.31.87.46 haproxy01
+  tags: name-resolution
 ```
 
 - To execute Ansible playbook:
