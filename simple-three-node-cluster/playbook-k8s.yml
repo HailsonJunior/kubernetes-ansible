@@ -1,0 +1,12 @@
+---
+- name: Cluster K8s Multi Master With HAProxy
+  hosts: 'all'
+  any_errors_fatal: true
+  become: yes
+  become_method: sudo
+  roles:
+    - { role: prepare-environment, tags: ["prepare-environment"]}
+    - { role: haproxy, tags: ["haproxy"]}
+    - { role: k8s, tags: ["k8s"]}
+
+...    
