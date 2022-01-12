@@ -8,20 +8,15 @@ terraform {
   required_version = ">= 0.14.9"
 
   #    backend "s3" {
-  #        bucket = "kubernetes"
-  #        key = ""
+  #        bucket = "YOUR-BUCKET-NAME-IF-YOU-HAVE-IT"
+  #        key = "FILE-NAME"
   #        region = var.aws_region 
-  #        profile = var.profile
   #    }
 }
 
 provider "aws" {
   region = var.aws_region
 }
-
-#module "s3" {
-#  source = "./s3"
-#}
 
 module "instances" {
   source = "./instances"
