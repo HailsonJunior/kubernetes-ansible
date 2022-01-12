@@ -27,6 +27,21 @@ resource "aws_security_group" "k8s-sg" {
   }
 }
 
+resource "aws_eip" "eip-manager" {
+  instance = aws_spot_instance_request.manager.spot_instance_id
+  vpc      = true
+}
+
+resource "aws_eip" "eip-worker01" {
+  instance = aws_spot_instance_request.worker01.spot_instance_id
+  vpc      = true
+}
+
+resource "aws_eip" "eip-worker02" {
+  instance = aws_spot_instance_request.worker02.spot_instance_id
+  vpc      = true
+}
+
 resource "aws_internet_gateway" "internet-gw" {
   vpc_id = aws_vpc.cluster-vpc.id
 }
@@ -41,6 +56,8 @@ resource "aws_route_table" "route-table" {
 }
 
 resource "aws_route_table_association" "subnet-association" {
+  provider = aws
+
   subnet_id      = aws_subnet.cluster-subnet.id
   route_table_id = aws_route_table.route-table.id
 }

@@ -1,8 +1,9 @@
 resource "aws_spot_instance_request" "manager" {
-  ami           = var.aws_ami
-  instance_type = var.aws_instance_type
-  user_data     = file("init-script.sh")
-  key_name      = aws_key_pair.my-key.key_name
+  ami                  = var.aws_ami
+  instance_type        = var.aws_instance_type
+  user_data            = file("init-script.sh")
+  key_name             = aws_key_pair.my-key.key_name
+  wait_for_fulfillment = true
 
   network_interface {
     network_interface_id = aws_network_interface.network-manager.id
@@ -19,13 +20,14 @@ resource "aws_spot_instance_request" "manager" {
 }
 
 resource "aws_spot_instance_request" "worker01" {
-  ami           = var.aws_ami
-  instance_type = var.aws_instance_type
-  user_data     = file("init-script.sh")
-  key_name      = aws_key_pair.my-key.key_name
+  ami                  = var.aws_ami
+  instance_type        = var.aws_instance_type
+  user_data            = file("init-script.sh")
+  key_name             = aws_key_pair.my-key.key_name
+  wait_for_fulfillment = true
 
   network_interface {
-    network_interface_id = aws_network_interface.network-manager.id
+    network_interface_id = aws_network_interface.network-worker01.id
     device_index         = 0
   }
 
@@ -41,13 +43,14 @@ resource "aws_spot_instance_request" "worker01" {
 }
 
 resource "aws_spot_instance_request" "worker02" {
-  ami           = var.aws_ami
-  instance_type = var.aws_instance_type
-  user_data     = file("init-script.sh")
-  key_name      = aws_key_pair.my-key.key_name
+  ami                  = var.aws_ami
+  instance_type        = var.aws_instance_type
+  user_data            = file("init-script.sh")
+  key_name             = aws_key_pair.my-key.key_name
+  wait_for_fulfillment = true
 
   network_interface {
-    network_interface_id = aws_network_interface.network-manager.id
+    network_interface_id = aws_network_interface.network-worker02.id
     device_index         = 0
   }
 
