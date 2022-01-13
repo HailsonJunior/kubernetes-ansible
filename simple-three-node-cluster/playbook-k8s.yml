@@ -6,7 +6,6 @@
   become_method: sudo
   roles:
     - { role: prepare-environment, tags: ["prepare-environment"]}
-    - { role: haproxy, tags: ["haproxy"]}
-    - { role: k8s, tags: ["k8s"]}
+    - { role: k8s-cluster, tags: ["k8s-cluster"]}
 
 ...    
