@@ -1,4 +1,10 @@
 ---
+- name: Create kernel modules file
+  file:
+    path: /etc/modules-load.d/k8s.conf
+    state: touch
+  tags: create-kernel-modules-file
+
 - name: Configuration kernel module 
   blockinfile:
     path: /etc/modules-load.d/k8s.conf
@@ -12,7 +18,7 @@
   tags: kernel-modules
 
 - name: Install Docker 
-  shell: curl -fsSL https://get.docker.com | bash1~
+  shell: curl -fsSL https://get.docker.com | bash
   tags: install-docker
 
 - name: Copy Docker daemon reload
@@ -43,7 +49,7 @@
 - name: Install packages needed to use the Kubernetes apt repository
   apt:
     name:
-      - apt-transport-http
+      - apt-transport-https
       - gnupg2
       - curl
     state: latest
@@ -96,15 +102,9 @@
 - name: Add token, hash and certificate key in a dummy host
   add_host:
     name: "K8S_TOKEN_HOLDER"
-    key: "{{ k8s_key.stdout }}"
     token: "{{ k8s_token.stdout }}"
     hash: "{{ k8s_ca_hash.stdout }}"
   tags: dummy-host
-
-- name: Print certificate key
-  debug:
-    msg: "[MASTER] K8S_TOKEN_HOLDER - the certificate key is {{ hostvars['K8S_TOKEN_HOLDER']['key'] }}"
-  tags: print-key
 
 - name: Print token
   debug:
