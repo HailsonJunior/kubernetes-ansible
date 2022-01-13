@@ -21,10 +21,24 @@
   shell: curl -fsSL https://get.docker.com | bash
   tags: install-docker
 
-- name: Copy Docker daemon reload
-  copy:
-    src: ~/kubernetes-ansible/simple-three-node-cluster/files/daemon.json
-    dest: /etc/docker/daemon.json
+- name: Create Docker deamon load file
+  file:
+    path: /etc/docker/daemon.json
+    state: touch
+  tags: create-docker-daemon-file
+
+- name: Configure Docker daemon reload
+  blockinfile:
+    path: /etc/docker/daemon.json
+    block: |
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
+      }
   tags: conf-docker-daemon
 
 - name: Docker service directory
