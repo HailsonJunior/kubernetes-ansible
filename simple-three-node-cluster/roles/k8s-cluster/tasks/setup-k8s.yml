@@ -89,9 +89,14 @@
 - name: Init cluster
   shell: kubeadm init
   when: "'k8s-manager01' in inventory_hostname"
+  tags: init-cluster
+  
+- name: Registry cluster token
+  shell: kubeadm token list | grep -i "kubeadm init" | cut -d ' ' -f1
+  when: "'k8s-manager01' in inventory_hostname"
   register: k8s_token
   changed_when: True
-  tags: init-cluster
+  tags: registry-token
 
 - name: Registry Ca Hash
   shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
