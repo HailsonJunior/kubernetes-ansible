@@ -21,7 +21,7 @@
   shell: curl -fsSL https://get.docker.com | bash
   tags: install-docker
 
-- name: Create Docker deamon load file
+- name: Create Docker daemon reload file
   file:
     path: /etc/docker/daemon.json
     state: touch
@@ -37,7 +37,10 @@
         "log-opts": {
           "max-size": "100m"
         },
-        "storage-driver": "overlay2"
+        "storage-driver": "overlay2",
+        "storage-opts": [
+          "overlay2.override_kernel_check=true"
+        ]
       }
   tags: conf-docker-daemon
 
