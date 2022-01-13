@@ -5,7 +5,7 @@
 
 - name: Configure daemon Docker
   copy:
-    src: ~/kubernetes-ansible/files/daemon.json
+    src: ~/kubernetes-ansible/highly-available-cluster-haproxy/files/daemon.json
     dest: /etc/docker/daemon.json
   tags: conf-docker-daemon
 
