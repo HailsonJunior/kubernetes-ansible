@@ -1,0 +1,141 @@
+---
+- name: Configuration kernel module 
+  blockinfile:
+    path: /etc/modules-load.d/k8s.conf
+    block: |
+      br_netfilter
+      ip_vs
+      ip_vs_rr
+      ip_vs_sh
+      ip_vs_wrr
+      nf_conntrack_ipv4
+  tags: kernel-modules
+
+- name: Install Docker 
+  shell: curl -fsSL https://get.docker.com | bash1~
+  tags: install-docker
+
+- name: Copy Docker daemon reload
+  copy:
+    src: ~/kubernetes-ansible/simple-three-node-cluster/files/daemon.json
+    dest: /etc/docker/daemon.json
+  tags: conf-docker-daemon
+
+- name: Docker service directory
+  shell: 'mkdir -p /etc/systemd/system/docker.service.d'
+  tags: docker-service-dir
+
+- name: Daemon reload
+  shell: 'systemctl daemon-reload'
+  tags: daemon-reload
+
+- name: Restart Docker service
+  service:
+    name: docker
+    state: restarted
+  tags: restart-docker-service
+
+- name: Update repo
+  apt:
+    update_cache: yes
+  tags: update
+
+- name: Install packages needed to use the Kubernetes apt repository
+  apt:
+    name:
+      - apt-transport-http
+      - gnupg2
+      - curl
+    state: latest
+  tags: install-packages
+
+- name: Download the Google Cloud public signing ke
+  shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+  tags: download-key
+
+- name: Add the Kubernetes apt repository01~
+  shell: echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+  tags: add-k8s-apt-repo
+
+- name: Update Repository
+  apt:
+    update_cache: yes
+  tags: update
+
+- name: Install kubelet, kubeadm and kubectl
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: latest
+  tags: install-packages
+
+- name: Disable swap
+  shell: swapoff -a
+  tags: Disable swap
+
+- name: Download images
+  shell: kubeadm config images pull
+  when: "'k8s-manager01' in inventory_hostname"
+  tags: download-images
+
+- name: Init cluster
+  shell: kubeadm init
+  when: "'k8s-manager01' in inventory_hostname"
+  register: k8s_token
+  changed_when: True
+  tags: init-cluster
+
+- name: Registry Ca Hash
+  shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  when: "'k8s-manager01' in inventory_hostname"
+  register: k8s_ca_hash
+  tags: registry-hash
+
+- name: Add token, hash and certificate key in a dummy host
+  add_host:
+    name: "K8S_TOKEN_HOLDER"
+    key: "{{ k8s_key.stdout }}"
+    token: "{{ k8s_token.stdout }}"
+    hash: "{{ k8s_ca_hash.stdout }}"
+  tags: dummy-host
+
+- name: Print certificate key
+  debug:
+    msg: "[MASTER] K8S_TOKEN_HOLDER - the certificate key is {{ hostvars['K8S_TOKEN_HOLDER']['key'] }}"
+  tags: print-key
+
+- name: Print token
+  debug:
+    msg: "[MASTER] K8S_TOKEN_HOLDER - the token is {{ hostvars['K8S_TOKEN_HOLDER']['token'] }}"
+  tags: print-token
+
+- name: Print hash
+  debug:
+    msg: "[MASTER] K8S_TOKEN_HOLDER - the CA Hash is {{ hostvars['K8S_TOKEN_HOLDER']['hash'] }}"
+  tags: print-hash
+
+- name: Create kube dir
+  file:
+    path: ~/.kube
+    state: directory
+    mode: 0750
+  when: "'k8s-manager01' in inventory_hostname"
+  tags: create-kube-dir
+
+- name: Link k8s admin conf
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    state: link
+  changed_when: True
+  when: "'manager1' in inventory_hostname"
+  tags: copy-k8s-admin-conf
+
+- name: Change owner
+  shell: 'chown $(id -u):$(id -g) $HOME/.kube/config'
+  when: "'manager1' in inventory_hostname"
+  tags: change-owner
+
+...  

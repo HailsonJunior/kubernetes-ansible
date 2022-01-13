@@ -1,0 +1,35 @@
+---
+- name: Change hostname manager01
+  hostname:
+    name: k8s-manager01
+  when: "'k8s-manager01' in inventory_hostname"
+  tags:
+    - hostname
+    - hostname-manager01
+
+- name: Change hostname worker01
+  hostname:
+    name: k8s-worker01
+  when: "'k8s-worker01' in inventory_hostname"
+  tags:
+    - hostname
+    - hostname-worker01
+
+- name: change hostname worker02
+  hostname:
+    name: k8s-worker02
+  when: "'k8s-worker02' in inventory_hostname"
+  tags:
+    - hostname
+    - hostname-worker02
+
+- name: Name resolution - /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {K8S-MANAGER01-IP} k8s-manager01
+      {K8S-WORKER01-IP} k8s-worker01
+      {K8S-WORKER02-IP} k8s-worker02
+  tags: name-resolution
+
+...

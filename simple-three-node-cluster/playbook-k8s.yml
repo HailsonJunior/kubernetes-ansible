@@ -1,5 +1,5 @@
 ---
-- name: Cluster K8s Multi Master With HAProxy
+- name: K8s cluster with three nodes 
   hosts: 'all'
   any_errors_fatal: true
   become: yes

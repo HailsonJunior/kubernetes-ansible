@@ -1,0 +1,9 @@
+---
+- name: Adding workers to the cluster
+  shell:
+    kubeadm join k8s-manager01:6443 --token={{ hostvars['K8S_TOKEN_HOLDER']['token'] }} \
+        --discovery-token-ca-cert-hash sha256:{{ hostvars['K8S_TOKEN_HOLDER']['hash'] }}
+  when: "'k8s-worker' in inventory_hostname"
+  tags: join-workers
+
+...
