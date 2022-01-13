@@ -27,9 +27,9 @@
   blockinfile:
     path: /etc/hosts
     block: |
-      {{ K8S-MANAGER01-IP }} k8s-manager01
-      {{ K8S-WORKER01-IP }} k8s-worker01
-      {{ K8S-WORKER02-IP }} k8s-worker02
+      {{ K8S_MANAGER01_IP }} k8s-manager01
+      {{ K8S_WORKER01_IP }} k8s-worker01
+      {{ K8S_WORKER02_IP }} k8s-worker02
   tags: name-resolution
 
 ...

@@ -59,7 +59,7 @@
   shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   tags: download-key
 
-- name: Add the Kubernetes apt repository01~
+- name: Add the Kubernetes apt repository
   shell: echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
   tags: add-k8s-apt-repo
 
@@ -135,12 +135,12 @@
     dest: ~/.kube/config
     state: link
   changed_when: True
-  when: "'manager1' in inventory_hostname"
+  when: "'manager01' in inventory_hostname"
   tags: copy-k8s-admin-conf
 
 - name: Change owner
   shell: 'chown $(id -u):$(id -g) $HOME/.kube/config'
-  when: "'manager1' in inventory_hostname"
+  when: "'manager01' in inventory_hostname"
   tags: change-owner
 
 ...  
