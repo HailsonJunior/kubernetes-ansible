@@ -1,14 +1,14 @@
-# Highly Available Kubernetes cluster with Ansible
+# Kubernetes cluster with Ansible
 
-This repository contains Ansible roles that will help you to create an [Kubernetes](https://kubernetes.io/) highly available clusters with [HAProxy](https://www.haproxy.com/) for production environment using Ansible.
+This repository contains Ansible roles that will help you to create an [Kubernetes](https://kubernetes.io/) highly available clusters with [HAProxy](https://www.haproxy.com/) for production environment using Ansible or a simple Kubernetes cluster with 3 nodes ```not for production``` also using Ansible.
 
 Requirements
 ------------
 Requires a machine with [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) installed.
 
-If you want to create it in AWS this repository contains [Terraform](https://www.terraform.io/) files that automates the creation of instances, so you will need to install Terraform.
+If you want to create it in AWS this repository contains [Terraform](https://www.terraform.io/) files that automates the creation of instances, so you will need to install Terraform. You can install Terraform using the [documentation](https://learn.hashicorp.com/tutorials/terraform/install-cli) or with [TFSwitch](https://tfswitch.warrensbox.com/Install/) for a better management of Teraform versions.
 
-How to Use
+How to Use - Highly Available Cluster With Haproxy
 ------------
 Creating Instances
 ------------
@@ -30,13 +30,13 @@ replace with your ACCESS KEY ID, SECRET ACCESS KEY and AWS region where do you w
 
 ```sh
 git clone https://github.com/HailsonJunior/kubernetes-ansible.git
-cd kubernetes-ansible/terraform
+cd kubernetes-ansible/highly-available-cluster-haproxy/terraform/
 terraform init
 terraform apply
 ```
 Creating Kubernetes Cluster
 ------------
-To use the Ansible roles you will only need to use the playbook ```playbook-k8s.yml``` in kubernetes-ansible directory.
+To use the Ansible roles you will only need to use the playbook ```playbook-k8s.yml``` in kubernetes-ansible/highly-available-cluster-haproxy directory.
 
 ```sh
 --
@@ -53,9 +53,9 @@ To use the Ansible roles you will only need to use the playbook ```playbook-k8s.
 ... 
 ```
 
-If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs ```kubernetes-ansible/inventory.ini``` according to your environment. It will also be necessary to edit the steps "Configure frontend and backend" on ```kubernetes-ansible/roles/haproxy/tasks/install-haproxy.yml``` playbook and the step "Name resolution HAProxy" on ```kubernetes-ansible/roles/prepare-environment/tasks/hostname.yml``` playbook:
+If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs ```kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini``` according to your environment. It will also be necessary to edit the steps "Configure frontend and backend" on ```kubernetes-ansible/roles/haproxy/tasks/install-haproxy.yml``` playbook and the step "Name resolution HAProxy" on ```kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml``` playbook:
 
-- kubernetes-ansible/inventory.ini
+- kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini
 ```sh
 [managers]
 manager1 ansible_host=172.31.87.40
@@ -71,7 +71,7 @@ worker3 ansible_host=172.31.87.45
 haproxy1 ansible_host=172.31.87.46
 ```
 
-- kubernetes-ansible/roles/haproxy/tasks/install-haproxy.yml
+- kubernetes-ansible/highly-available-cluster-haproxy/roles/haproxy/tasks/install-haproxy.yml
 ```sh
 - name: Configure frontend and backend
   blockinfile:
@@ -92,7 +92,7 @@ haproxy1 ansible_host=172.31.87.46
           server k8s-manager03 172.31.87.42:6443 check fall 3 rise 2
 ```
 
-- kubernetes-ansible/roles/prepare-environment/tasks/hostname.yml
+- kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml
 ```sh
 - name: Name resolution HAProxy
   blockinfile:
