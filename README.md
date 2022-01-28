@@ -197,5 +197,7 @@ K8S_WORKER02_IP: 10.0.80.44
 - To execute Ansible playbook:
 
 ```bash
+cd ..
+
 ansible-playbook -v -i inventory.ini playbook-k8s.yml
 ```
