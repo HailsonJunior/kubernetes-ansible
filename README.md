@@ -130,8 +130,11 @@ replace with your ```ACCESS KEY ID``` and ```SECRET ACCESS KEY```.
 
 ```bash
 git clone https://github.com/HailsonJunior/kubernetes-ansible.git
+
 cd kubernetes-ansible/simple-three-node-cluster/terraform/
+
 terraform init
+
 terraform apply
 ```
 
