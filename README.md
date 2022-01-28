@@ -108,6 +108,8 @@ haproxy1 ansible_host=172.31.87.46
 - To execute Ansible playbook:
 
 ```bash
+cd ..
+
 ansible-playbook -v -i inventory.ini playbook-k8s.yml
 ```
 
