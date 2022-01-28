@@ -20,7 +20,6 @@ In this setup we will use seven instances: 3 Managers, 3 Workers and 1 for HAPro
 ```bash
 export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
 export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-export AWS_DEFAULT_REGION=us-east-1
 ```
 replace with your ACCESS KEY ID, SECRET ACCESS KEY and AWS region where do you want to create the resources.
 
@@ -121,7 +120,6 @@ In this setup we will use three instances: 1 Manager and 2 Workers.
 ```bash
 export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
 export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-export AWS_DEFAULT_REGION=us-east-1
 ```
 replace with your ACCESS KEY ID, SECRET ACCESS KEY and AWS region where do you want to create the resources.
 
