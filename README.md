@@ -6,7 +6,7 @@ Requirements
 ------------
 Requires a machine with [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) installed.
 
-If you want to create it in AWS this repository contains [Terraform](https://www.terraform.io/) files that automates the creation of instances, so you will need to install Terraform. You can install Terraform using the [documentation](https://learn.hashicorp.com/tutorials/terraform/install-cli) or with [TFSwitch](https://tfswitch.warrensbox.com/Install/) for a better management of Terraform versions.
+If you want to create it in AWS this repository contains [Terraform](https://www.terraform.io/) files that automates the creation of instances, so you will need to install Terraform. You can install Terraform using the [documentation](https://learn.hashicorp.com/tutorials/terraform/install-cli) or with [TFSwitch](https://tfswitch.warrensbox.com/Install/) for a better management of Terraform versions. You also need to have a user called ```ubuntu``` in your machine.
 
 How to Use - Highly Available Cluster With HAProxy
 ------------
@@ -53,7 +53,9 @@ To use the Ansible roles you will only need to use the playbook ```playbook-k8s.
 ... 
 ```
 
-If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs ```kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini``` according to your environment. It will also be necessary to edit the steps "Configure frontend and backend" on ```kubernetes-ansible/roles/haproxy/tasks/install-haproxy.yml``` playbook and the step "Name resolution HAProxy" on ```kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml``` playbook:
+If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini``` according to your environment. It will also be necessary to edit the steps "Configure frontend and backend" on ```kubernetes-ansible/roles/haproxy/tasks/install-haproxy.yml``` playbook and the step "Name resolution HAProxy" on ```kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml``` playbook.
+
+If you have created the instances using Terraform files from this repository and are executing Terraform out from AWS environment you need to edit de IPs with the instances public IPs that can be visualized in AWS console.
 
 - kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini
 ```bash
@@ -104,7 +106,15 @@ haproxy1 ansible_host=172.31.87.46
       172.31.87.46 haproxy01
   tags: name-resolution
 ```
+- Key exchange
+Exchange key using ssh command with all machines (using ubuntu user if the machines are in AWS). 
+For example:
 
+```bash
+ssh 172.31.87.40
+```
+
+ssh 
 - To execute Ansible playbook:
 
 ```bash
@@ -172,7 +182,7 @@ To use the Ansible roles you will only need to use the playbook ```playbook-k8s.
 ... 
 ```
 
-If you have created or not the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs ```kubernetes-ansible/simple-three-node-cluster/inventory.ini``` according to your environment. If you have created using Terraform files from this repository you have to put the public IPs of the instances created that can be visualized in AWS console. If you are not using Terraform files from this repository it will also be necessary to edit ```kubernetes-ansible/simple-three-node-cluster/roles/prepare-environment/defaults/main.yml``` file.
+If you have created or not the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/simple-three-node-cluster/inventory.ini``` according to your environment. If you have created using Terraform files from this repository you have to put the instances public IPs that can be visualized in AWS console. If you are not using Terraform files from this repository it will also be necessary to edit ```kubernetes-ansible/simple-three-node-cluster/roles/prepare-environment/defaults/main.yml``` file.
 
 - kubernetes-ansible/simple-three-node-cluster/inventory.ini
 ```bash
