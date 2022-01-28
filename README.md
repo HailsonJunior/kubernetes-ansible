@@ -15,7 +15,7 @@ Creating Instances
 If you are using AWS you can create the instances with Terraform.
 In this setup we will use seven instances: 3 Managers, 3 Workers and 1 for HAProxy.
 
-Remember to execute theses steps using a user called ```ubuntu```.
+Remember to execute these steps using a user called ```ubuntu```.
 
 - Set AWS environment variables
 
@@ -132,7 +132,7 @@ Creating Instances
 If you are using AWS you can create the instances with Terraform.
 In this setup we will use three instances: 1 Manager and 2 Workers.
 
-Remember to execute theses steps using a user called ```ubuntu```.
+Remember to execute these steps using a user called ```ubuntu```.
 
 - Set AWS environment variables
 
