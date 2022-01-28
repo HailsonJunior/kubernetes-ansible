@@ -17,7 +17,7 @@ In this setup we will use seven instances: 3 Managers, 3 Workers and 1 for HAPro
 
 - Set AWS environment variables
 
-```bash
+```sh
 export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
 export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
