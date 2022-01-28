@@ -54,10 +54,11 @@ To use the Ansible roles you will only need to use the playbook ```playbook-k8s.
 
 ... 
 ```
-
+:warning: NOTE |
+--- |
 If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini``` according to your environment. It will also be necessary to edit the steps "Configure frontend and backend" on ```kubernetes-ansible/roles/haproxy/tasks/install-haproxy.yml``` playbook and the step "Name resolution HAProxy" on ```kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml``` playbook.
 
-If you have created the instances using Terraform files from this repository and are executing Terraform out from AWS environment you need to edit de IPs with the instances public IPs that can be visualized in AWS console.
+If you have created the instances using Terraform files from this repository and are executing Terraform out from AWS environment you need to edit de IPs with the instances public IPs that can be visualized in AWS console. |
 
 - kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini
 ```bash
@@ -185,8 +186,9 @@ To use the Ansible roles you will only need to use the playbook ```playbook-k8s.
 
 ... 
 ```
-
-If you have created or not the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/simple-three-node-cluster/inventory.ini``` according to your environment. If you have created using Terraform files from this repository you have to put the instances public IPs that can be visualized in AWS console. If you are not using Terraform files from this repository it will also be necessary to edit ```kubernetes-ansible/simple-three-node-cluster/roles/prepare-environment/defaults/main.yml``` file.
+:warning: NOTE |
+--- |
+If you have created or not the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/simple-three-node-cluster/inventory.ini``` according to your environment. If you have created using Terraform files from this repository you have to put the instances public IPs that can be visualized in AWS console. If you are not using Terraform files from this repository it will also be necessary to edit ```kubernetes-ansible/simple-three-node-cluster/roles/prepare-environment/defaults/main.yml``` file. |
 
 - kubernetes-ansible/simple-three-node-cluster/inventory.ini
 ```bash
