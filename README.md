@@ -56,25 +56,25 @@ To use the Ansible roles you will only need to use the playbook ```playbook-k8s.
 ```
 :warning: NOTE |
 --- |
-If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini``` according to your environment. It will also be necessary to edit the steps "Configure frontend and backend" on ```kubernetes-ansible/highly-available-cluster-haproxy/roles/haproxy/tasks/install-haproxy.yml``` playbook and the step "Name resolution HAProxy" on ```kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml``` playbook. If you have created the instances using Terraform files from this repository and are executing Terraform outside of AWS environment you need to edit de IPs with the instances public IPs that can be visualized in AWS console. |
+If you have not created the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini``` according to your environment. It will also be necessary to edit the steps "Configure frontend and backend" on ```kubernetes-ansible/highly-available-cluster-haproxy/roles/haproxy/tasks/install-haproxy.yml``` playbook and the step "Name resolution HAProxy" on ```kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml``` playbook. If you have created the instances using Terraform files from this repository and are executing Terraform outside of AWS environment you need just to edit de IPs with the instances public IPs that can be visualized in AWS console in ```inventory.init``` file. |
 
 - kubernetes-ansible/highly-available-cluster-haproxy/inventory.ini
 ```bash
 [managers]
-manager1 ansible_host=172.31.87.40
-manager2 ansible_host=172.31.87.41
-manager3 ansible_host=172.31.87.42
+manager1 ansible_host=3.95.164.178
+manager2 ansible_host=34.230.74.8
+manager3 ansible_host=3.82.157.44
 
 [workers]
-worker1 ansible_host=172.31.87.43
-worker2 ansible_host=172.31.87.44
-worker3 ansible_host=172.31.87.45
+worker1 ansible_host=3.89.102.230
+worker2 ansible_host=3.89.98.27
+worker3 ansible_host=54.161.242.141
 
 [haproxy]
-haproxy1 ansible_host=172.31.87.46
+haproxy1 ansible_host=52.207.233.194
 ```
 
-- kubernetes-ansible/highly-available-cluster-haproxy/roles/haproxy/tasks/install-haproxy.yml
+- kubernetes-ansible/highly-available-cluster-haproxy/roles/haproxy/tasks/install-haproxy.yml (private IP)
 ```bash
 - name: Configure frontend and backend
   blockinfile:
@@ -95,7 +95,7 @@ haproxy1 ansible_host=172.31.87.46
           server k8s-manager03 172.31.87.42:6443 check fall 3 rise 2
 ```
 
-- kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml
+- kubernetes-ansible/highly-available-cluster-haproxy/roles/prepare-environment/tasks/hostname.yml (private IP)
 ```bash
 - name: Name resolution HAProxy
   blockinfile:
@@ -108,19 +108,18 @@ haproxy1 ansible_host=172.31.87.46
   tags: name-resolution
 ```
 - Key exchange
+
 Exchange key using ssh command with all machines (using ubuntu user if the machines are in AWS). 
+
 For example:
 
 ```bash
-ssh 172.31.87.40
+ssh 3.89.102.230
 ```
 
-ssh 
 - To execute Ansible playbook:
 
 ```bash
-cd ..
-
 ansible-playbook -v -i inventory.ini playbook-k8s.yml
 ```
 
@@ -211,7 +210,5 @@ K8S_WORKER02_IP: 10.0.80.44
 - To execute Ansible playbook:
 
 ```bash
-cd ..
-
 ansible-playbook -v -i inventory.ini playbook-k8s.yml
 ```
