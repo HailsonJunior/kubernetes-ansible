@@ -152,6 +152,10 @@ terraform init
 terraform apply
 ```
 
+:warning: NOTE |
+--- |
+The resources will be created in us-east-2 region.
+
 After Terraform execution you can receive an error like this:
 
 ```bash
@@ -185,7 +189,7 @@ To use the Ansible roles you will only need to use the playbook ```playbook-k8s.
 ```
 :warning: NOTE |
 --- |
-If you have created or not the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/simple-three-node-cluster/inventory.ini``` according to your environment. If you have created using Terraform files from this repository you have to put the instances public IPs that can be visualized in AWS console. If you are not using Terraform files from this repository it will also be necessary to edit ```kubernetes-ansible/simple-three-node-cluster/roles/prepare-environment/defaults/main.yml``` file. |
+If you have created or not the instances using Terraform files from this repository will be needed to edit the Ansible inventory file replacing the IPs in ```kubernetes-ansible/simple-three-node-cluster/inventory.ini```. If you have created using Terraform files from this repository you have to put the instances public IPs that can be visualized in AWS console. If you are not using Terraform files from this repository it will also be necessary to edit ```kubernetes-ansible/simple-three-node-cluster/roles/prepare-environment/defaults/main.yml``` file. |
 
 - kubernetes-ansible/simple-three-node-cluster/inventory.ini
 ```bash
@@ -197,6 +201,10 @@ k8s-worker01 ansible_host=3.130.133.219
 k8s-worker02 ansible_host=3.15.56.124
 ```
 
+:warning: NOTE |
+--- |
+The instance with private IP 10.0.80.40 is the manager instance, 10.0.80.43 is worker01 and 10.0.80.44 is worker02.
+
 - kubernetes-ansible/simple-three-node-cluster/roles/prepare-environment/defaults/main.yml
 ```bash
 ---
@@ -205,6 +213,16 @@ k8s-worker02 ansible_host=3.15.56.124
 K8S_MANAGER01_IP: 10.0.80.40
 K8S_WORKER01_IP: 10.0.80.43
 K8S_WORKER02_IP: 10.0.80.44
+```
+
+- Key exchange
+
+Exchange key using ssh command with all machines (using ubuntu user if the machines are in AWS). 
+
+For example:
+
+```bash
+ssh 3.89.102.230
 ```
 
 - To execute Ansible playbook:
